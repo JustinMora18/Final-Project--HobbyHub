@@ -50,8 +50,9 @@ export default function PostCard({ post }) {
                 <span className="post-username">@{post.username || "Anonymous"}</span>
                 <h3 className="post-title">{post.title}</h3>
             </div>
+
             <p className="post-content">{post.content}</p>
-            
+
             {(post.tags || []).length > 0 && (
                 <div className="post-tags">
                     {(post.tags || []).map((tag) => (
@@ -73,7 +74,7 @@ export default function PostCard({ post }) {
                     ▲ {post.upvotes || 0}
                 </button>
 
-                <span className="post-comments">💬 {post.comments || 0}</span>
+                <span className="post-comments">💬 {post.comments_count || 0}</span>
             </div>
         </div>
     );

@@ -1,0 +1,138 @@
+.post-detail {
+    max-width: 900px;
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-lg);
+    background-color: var(--color-light); 
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+}
+
+.post-content {
+    background-color: var(--color-medium-dark);
+    padding: var(--spacing-lg);
+    border-radius: 16px;
+    color: var(--color-light);
+}
+
+.post-author {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.post-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-light);
+}
+
+.post-image {
+    max-width: 100%;
+    border-radius: var(--radius-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.post-body {
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: var(--spacing-md);
+}
+
+.post-tags {
+    margin-bottom: var(--spacing-md);
+}
+
+.tag {
+    display: inline-block;
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-right: 6px;
+    font-size: 0.8rem;
+}
+
+.post-likes {
+    font-size: 0.9rem;
+    color: var(--color-light);
+    margin-bottom: var(--spacing-lg);
+}
+
+.post-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.btn-edit,
+.btn-delete,
+.btn-save,
+.btn-cancel {
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-edit:hover,
+.btn-delete:hover,
+.btn-save:hover,
+.btn-cancel:hover {
+    background-color: #1f1f1f;
+}
+
+.edit-form {
+    background-color: var(--color-medium-dark);
+    padding: var(--spacing-lg);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.edit-input,
+.edit-textarea {
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+}
+
+.comments-section {
+    margin-top: var(--spacing-lg);
+}
+
+.comments-section h3 {
+    color: var(--color-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comment {
+    background-color: #1a1a1a;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-light);
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-comment-delete {
+    background-color: var(--color-dark);
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s ease;
+}

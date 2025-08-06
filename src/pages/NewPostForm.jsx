@@ -17,7 +17,7 @@ export default function NewPostForm() {
         setLoading(true);
         setError(null);
         setSuccess(false);
-        
+
         try {
             await pb.collection('posts').create({
                 title,
@@ -36,7 +36,7 @@ export default function NewPostForm() {
             setContent("");
             setImageUrl("");
             setTags("");
-        }  catch (err) {
+        } catch (err) {
             setError('Error al crear el post.');
             console.error(err);
         } finally {
@@ -45,58 +45,60 @@ export default function NewPostForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="new-post-form">
-            <h2>Create a new post</h2>
+        <div className="post-box">
+            <form onSubmit={handleSubmit} className="new-post-form">
+                <h2>Create a new post</h2>
 
-            <input
-                type="text"
-                placeholder="Your name"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="input-field"
-            />
+                <input
+                    type="text"
+                    placeholder="Your name"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    className="input-field"
+                />
 
-            <input
-                type="text"
-                placeholder="Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="input-field"
-            />
+                <input
+                    type="text"
+                    placeholder="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                    className="input-field"
+                />
 
-            <textarea
-                placeholder="Content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-                rows={5}
-                className="input-field"
-            />
+                <textarea
+                    placeholder="Content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    required
+                    rows={5}
+                    className="input-field"
+                />
 
-            <input
-                type="text"
-                placeholder="Image URL"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="input-field"
-            />
+                <input
+                    type="text"
+                    placeholder="Image URL"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="input-field"
+                />
 
-            <input
-                type="text"
-                placeholder="Hashtags (comma-separated, e.g. #react, #frontend)"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="input-field"
-            />
+                <input
+                    type="text"
+                    placeholder="Hashtags (comma-separated, e.g. #react, #frontend)"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    className="input-field"
+                />
 
-            <button type="submit" disabled={loading} className="submit-btn">
-                {loading ? 'Posting...' : 'Post'}
-            </button>
+                <button type="submit" disabled={loading} className="submit-btn">
+                    {loading ? 'Posting...' : 'Post'}
+                </button>
 
-            {error && <p className="error-message">{error}</p>}
-            {success && <p className="success-message">Post created successfully!</p>}
-        </form>
+                {error && <p className="error-message">{error}</p>}
+                {success && <p className="success-message">Post created successfully!</p>}
+            </form>
+        </div>
     );
 }

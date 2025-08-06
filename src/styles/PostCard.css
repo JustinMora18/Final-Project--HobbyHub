@@ -1,0 +1,78 @@
+.post-card {
+    background-color: var(--color-medium-dark);
+    padding: var(--spacing-md);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.post-card:hover {
+    transform: scale(1.01);
+}
+
+.post-header {
+    margin-bottom: var(--spacing-sm);
+}
+
+.post-username {
+    display: block;
+    font-weight: 700;
+    color: var(--color-light);
+    margin-bottom: 4px;
+}
+
+.post-time {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.post-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-light);
+    margin: 4px 0;
+}
+
+.post-content {
+    color: #ccc;
+    font-size: 0.95rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.post-tags {
+    margin-top: var(--spacing-sm);
+}
+
+.tag {
+    display: inline-block;
+    background-color: var(--color-dark); 
+    color: var(--color-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-right: 6px;
+    font-size: 0.8rem;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+.upvote-btn {
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.post-comments {
+    font-size: 0.85rem;
+    color: var(--color-light);
+}

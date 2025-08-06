@@ -1,64 +1,123 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import pb from "../pocketbase/pocketbaseClient";
+import CommentsForm from "../components/CommentsForm";
 import "../styles/PostDetail.css";
 
 export default function PostDetail() {
     const { id } = useParams();
-    const [post, setPost] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [postComments, setPostComments] = useState([]);
+    const navigate = useNavigate();
 
-    const [commentText, setCommentText] = useState("");
-    const [commentUsername, setCommentUsername] = useState("");
+    const [post, setPost] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+
+    const fetchComments = async () => {
+        try {
+            const fetchedComments = await pb.collection("comments").getFullList({
+                filter: `post_id = "${id}"`,
+                sort: "-created",
+            });
+            setComments(fetchedComments);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     useEffect(() => {
         if (!id) return;
 
-        let isMounted = true;
+        let isActive = true;
 
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 const fetchedPost = await pb.collection("posts").getOne(id);
-                const comments = await pb.collection("comments").getFullList({
-                    filter: `post_id="${id}"`,
-                    sort: "-created",
-                });
+                if (!isActive) return;
 
-                if (isMounted) {
-                    setPost(fetchedPost);
-                    setPostComments(comments);
-                }
+                setPost(fetchedPost);
+                setTitle(fetchedPost.title);
+                setContent(fetchedPost.content);
+                await fetchComments();
             } catch (err) {
-                console.error("Error loading post or comments:", err);
-                if (isMounted) setError("Error loading post.");
+                if (!isActive) return;
+                setError("Error loading post or comments.");
+                console.error(err);
             } finally {
-                if (isMounted) setLoading(false);
+                if (!isActive) return;
+                setLoading(false);
             }
         };
 
         fetchData();
 
         return () => {
-            isMounted = false;
+            isActive = false;
         };
     }, [id]);
 
-    const handleCommentSubmit = async (e) => {
-        e.preventDefault();
+    const handleEditToggle = () => setIsEditing(!isEditing);
+
+    const handleUpdate = async () => {
+        setLoading(true);
         try {
-            const newComment = await pb.collection("comments").create({
-                content: commentText,
-                username: commentUsername,
-                post_id: id,
+            const updated = await pb.collection("posts").update(id, {
+                title,
+                content,
+            });
+            setPost(updated);
+            setIsEditing(false);
+            setError(null);
+        } catch (err) {
+            setError("Error updating post.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+
+        setLoading(true);
+        try {
+            await pb.collection("posts").delete(id);
+            navigate("/");
+        } catch (err) {
+            setError("Error deleting post.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        const confirm = window.confirm("Delete this comment?");
+        if (!confirm) return;
+
+        try {
+            await pb.collection("comments").delete(commentId);
+
+            setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+            const currentPost = await pb.collection("posts").getOne(id);
+            await pb.collection("posts").update(id, {
+                comments_count: Math.max(0, (currentPost.comments_count || 1) - 1),
             });
 
-            setPostComments((prev) => [newComment, ...prev]);
-            setCommentText("");
-            setCommentUsername("");
+            setPost((prev) => ({
+                ...prev,
+                comments_count: Math.max(0, (prev?.comments_count || 1) - 1),
+            }));
         } catch (err) {
-            console.error("Error creating comment:", err);
+            console.error("Error deleting comment:", err);
         }
     };
 
@@ -68,44 +127,80 @@ export default function PostDetail() {
 
     return (
         <div className="post-detail">
-            <h1>{post.title}</h1>
-            <p className="author">@{post.username || "Anonymous"}</p>
-            <p className="content">{post.content}</p>
-            <p className="upvotes">upvotes: {post.upvotes || 0}</p>
-
-            <div className="comments-section">
-                <h3>Comments</h3>
-                {postComments.length === 0 ? (
-                    <p>No comments yet.</p>
-                ) : (
-                    postComments.map((comment) => (
-                        <div key={comment.id} className="comment">
-                            <p className="comment-user">@{comment.username}</p>
-                            <p className="comment-text">{comment.content}</p>
-                        </div>
-                    ))
-                )}
-            </div>
-
-            <div className="add-comment">
-                <h4>Add a comment</h4>
-                <form onSubmit={handleCommentSubmit}>
+            {isEditing ? (
+                <div className="edit-form">
                     <input
                         type="text"
-                        placeholder="Your name"
-                        value={commentUsername}
-                        onChange={(e) => setCommentUsername(e.target.value)}
-                        required
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        disabled={loading}
+                        className="edit-input"
                     />
                     <textarea
-                        placeholder="Write your comment..."
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        required
-                    ></textarea>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        disabled={loading}
+                        rows={6}
+                        className="edit-textarea"
+                    />
+                    <button onClick={handleUpdate} disabled={loading} className="btn-save">
+                        Save
+                    </button>
+                    <button onClick={handleEditToggle} disabled={loading} className="btn-cancel">
+                        Cancel
+                    </button>
+                </div>
+            ) : (
+                <div className="post-content">
+                    <div className="post-actions">
+                        <button onClick={handleEditToggle} className="btn-edit">Edit</button>
+                        <button onClick={handleDelete} className="btn-delete">Delete</button>
+                    </div>
+                    <p className="post-author">@{post.username || "Anonymous"}</p>
+                    <h1 className="post-title">{post.title}</h1>
+
+                    {post.image_url && (
+                        <img
+                            src={post.image_url}
+                            alt={post.title}
+                            className="post-image"
+                        />
+                    )}
+
+                    <p className="post-body">{post.content}</p>
+
+                    {post.tags?.length > 0 && (
+                        <div className="post-tags">
+                            {post.tags.map((tag) => (
+                                <span key={tag} className="tag">{tag}</span>
+                            ))}
+                        </div>
+                    )}
+
+                    <p className="post-likes">Upvotes: {post.upvotes || 0}</p>
+
+                    <div className="comments-section">
+                        <h3>Comments</h3>
+                        {comments.length === 0 ? (
+                            <p>No comments yet.</p>
+                        ) : (
+                            comments.map((comment) => (
+                                <div key={comment.id} className="comment">
+                                    <p><strong>@{comment.username || "Anonymous"}</strong>: {comment.content}</p>
+                                    <button
+                                        onClick={() => handleDeleteComment(comment.id)}
+                                        className="btn-comment-delete"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    <CommentsForm postId={id} onNewComment={fetchComments} />
+                </div>
+            )}
         </div>
     );
 }

@@ -1,0 +1,45 @@
+.feed-container {
+    background-color: var(--color-light);
+    max-width: 900px;
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    color: var(--color-dark);
+}
+
+.sort-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.sort-buttons span {
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
+.sort-button {
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    padding: 6px 14px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.sort-button:hover {
+    background-color: #1f1f1f;
+}
+
+.sort-button.active {
+    background-color: var(--color-light);
+    color: var(--color-dark);      
+    border: 2px solid var(--color-dark);
+}
